@@ -41,7 +41,7 @@ let getAnchor =
 [@react.component]
 let make =
     (
-      ~contextRef: React.Ref.t(Js.Nullable.t(Dom.element))=?,
+      ~contextRef: React.ref(Js.Nullable.t(Dom.element)),
       ~position=Top,
       ~children: (~position: position) => React.element,
       ~onKeyPress=?,
@@ -50,15 +50,14 @@ let make =
   let divRef = React.useRef(Js.Nullable.null);
   React.useLayoutEffect0(() => {
     let contextElement =
-      switch (Js.Nullable.toOption(React.Ref.current(contextRef))) {
+      switch (Js.Nullable.toOption(contextRef.current)) {
       | Some(element) => element
       | None => raise(RefHasNoElement)
       };
     let contextRect =
       Webapi.Dom.Element.getBoundingClientRect(contextElement);
 
-    let layerDiv =
-      Belt.Option.getExn(Js.Nullable.toOption(React.Ref.current(divRef)));
+    let layerDiv = Belt.Option.getExn(Js.Nullable.toOption(divRef.current));
     let layerRect = Webapi.Dom.Element.getBoundingClientRect(layerDiv);
 
     setAnchor(_ => Some(getAnchor(contextRect, layerRect, position)));
@@ -71,7 +70,7 @@ let make =
       | BottomLeft(y, x)
       | TopLeft(y, x)
       | TopRight(y, x) =>
-        ReactDOMRe.Style.make(
+        ReactDOM.Style.make(
           ~top=Js.Float.toString(y) ++ "px",
           ~left=Js.Float.toString(x) ++ "px",
           (),
@@ -81,13 +80,13 @@ let make =
     Belt.Option.map(
       anchor,
       fun
-      | BottomLeft(_, _) => ReactDOMRe.Style.make(~bottom="0", ~left="0", ())
-      | TopLeft(_, _) => ReactDOMRe.Style.make(~top="0", ~left="0", ())
-      | TopRight(_, _) => ReactDOMRe.Style.make(~top="0", ~right="0", ()),
+      | BottomLeft(_, _) => ReactDOM.Style.make(~bottom="0", ~left="0", ())
+      | TopLeft(_, _) => ReactDOM.Style.make(~top="0", ~left="0", ())
+      | TopRight(_, _) => ReactDOM.Style.make(~top="0", ~right="0", ()),
     );
   <Layer ?onKeyPress>
     <div
-      ref={ReactDOMRe.Ref.domRef(divRef)}
+      ref={ReactDOM.Ref.domRef(divRef)}
       className=Styles.layer
       style=?outerStyle>
       <div className=Styles.layer style=?innerStyle>

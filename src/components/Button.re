@@ -29,13 +29,13 @@ let make =
       forwardedRef,
     ) =>
     <button
-      className={Cn.make([
+      className={Cn.fromList([
         Styles.button,
         switch (type_) {
         | Primary => Styles.primary
         | Secondary => Styles.secondary
         },
-        Cn.unpack(className),
+        Cn.take(className),
       ])}
       ?onClick
       ?onMouseEnter
@@ -43,7 +43,7 @@ let make =
       ref=?{
         Belt.Option.map(
           Js.Nullable.toOption(forwardedRef),
-          ReactDOMRe.Ref.domRef,
+          ReactDOM.Ref.domRef,
         )
       }>
       children
